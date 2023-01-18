@@ -20,6 +20,6 @@ Describe each of the type of alerts fired by this agent
 
 ## Test Data
 
-The agent behaviour can be verified with the following transactions:
+The bot behaviour can be verified with the following transactions:
 
 - 0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8 (Nethermind forta bot deployer address)
