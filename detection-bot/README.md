@@ -6,7 +6,7 @@ This bot detects bots that are deployed by the Nethermind deployer address, [0x8
 
 ## Supported Chains
 
-- Ethereum
+- Polygon
 
 ## Alerts
 
