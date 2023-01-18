@@ -2,7 +2,7 @@
 
 ## Description
 
-This agent detects bots that are deployed by Nethermind
+This bot detects bots that are deployed by the Nethermind deployer address, [0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8](https://polygonscan.com/address/0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8)
 
 ## Supported Chains
 
