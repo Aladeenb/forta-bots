@@ -1,4 +1,4 @@
-# Nethermind Bot Deployments Agent
+# Nethermind Bot Deployments Bot
 
 ## Description
 
