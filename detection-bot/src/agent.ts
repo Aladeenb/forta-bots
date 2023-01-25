@@ -16,7 +16,7 @@ const handleTransaction: HandleTransaction = async (txEvent: TransactionEvent) =
       type: FindingType.Info,
       severity: FindingSeverity.Info,
       metadata: {
-        string: txEvent.hash,
+        string: deployUpdateTx,
       },
     })
   );
