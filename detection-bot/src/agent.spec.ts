@@ -31,7 +31,7 @@ describe("Nethermind bot deployment bot", () => {
     });
 
     it("returns a finding if a bot is deployed/updated", async () => {
-      const address = "0x02788b3452849601e63ca70ce7db72c30c3cfd18";
+      const address = "0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8";
       const txEvent = createTxEventWithAddresses({ [address]: true });
 
       const findings = await handleTransaction(txEvent);
