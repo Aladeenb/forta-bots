@@ -1,5 +1,5 @@
 {
-  "name": "forta-agent-nethermind-detector",
+  "name": "forta-agent-nethermind-bots-deployment-detector",
   "version": "0.0.1",
   "description": "Forta Agent Typescript nethermind detector project",
   "chainIds": [
@@ -27,7 +27,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "forta-agent": "^0.1.16"
+    "forta-agent": "^0.1.16",
+    "forta-agent-tools": "^3.2.5"
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",

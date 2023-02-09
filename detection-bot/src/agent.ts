@@ -1,71 +1,32 @@
-import { Finding, HandleTransaction, TransactionEvent, FindingSeverity, FindingType } from "forta-agent";
+import { Finding, HandleTransaction, TransactionEvent } from "forta-agent";
+import { botsParams, createFinding, inputType, updateFinding } from "./utils";
+import { CREATE_BOT_FUNCTION, UPDATE_BOT_FUNCTION, DEPLOY_UPDATE_CONTRACT_ADDRESS } from "./cosntants";
 
-import {
-  CREATE_BOT_FUNCTION,
-  UPDATE_BOT_FUNCTION,
-  NETHERMIND_ADDRESS,
-  DEPLOY_UPDATE_CONTRACT_ADDRESS,
-} from "./cosntants";
-
-import { createFinding, updateFinding } from "./utils";
-
-const handleTransaction: HandleTransaction = async (txEvent: TransactionEvent) => {
-  const findings: Finding[] = [];
-
-  // filter functions for create or update bots
-  const createBots = txEvent.filterFunction(CREATE_BOT_FUNCTION, DEPLOY_UPDATE_CONTRACT_ADDRESS);
-  const updateBots = txEvent.filterFunction(UPDATE_BOT_FUNCTION, DEPLOY_UPDATE_CONTRACT_ADDRESS);
-
-  const createUpdateTransaction = Object.keys(txEvent.addresses).find(() => NETHERMIND_ADDRESS);
-
-  Array.from(createBots).forEach((createBot) => {
-    // extract bot creation arguments
-    const { owner } = createBot.args;
-
-    if (!createBots && !updateBots && !createUpdateTransaction) return findings;
-    // A bot was created
-    else if (createUpdateTransaction && createBots && !updateBots) {
-      //TODO recheck if it is needed
-      findings.push(
-        Finding.fromObject({
-          name: "Nethermind Bot",
-          description: `Bot created from (${NETHERMIND_ADDRESS}).`,
-          alertId: "NETHERMIND-1",
-          type: FindingType.Info,
-          severity: FindingSeverity.Info,
-          metadata: {
-            from: owner,
-          },
-        })
-      );
+export function provideHandleTransaction(botsParams: inputType): HandleTransaction {
+  return async (txEvent: TransactionEvent): Promise<Finding[]> => {
+    const findings: Finding[] = [];
+    const createBot = txEvent.filterFunction(CREATE_BOT_FUNCTION, DEPLOY_UPDATE_CONTRACT_ADDRESS);
+    const updateBot = txEvent.filterFunction(UPDATE_BOT_FUNCTION, DEPLOY_UPDATE_CONTRACT_ADDRESS);
+    if (txEvent.from !== botsParams.deployerAddress.toLocaleLowerCase()) return findings;
+    else if (createBot.length++) {
+      // returns a finding if function createAgent is created
+      createBot.forEach((createBotFunction) => {
+        const { owner } = createBotFunction.args;
+        findings.push(createFinding(owner));
+      });
+      return findings;
+    } else if (updateBot.length++) {
+      // returns a finding if function update is created
+      updateBot.forEach((updateBotFunction) => {
+        const { owner } = updateBotFunction.args;
+        findings.push(updateFinding(owner));
+      });
+      return findings;
     }
-  });
-
-  Array.from(updateBots).forEach((updateBot) => {
-    // extract the needed arguments
-    const { owner } = updateBot.args;
-
-    if (createUpdateTransaction && !createBots && !updateBots) return findings;
-    // A bot was updated
-    else if (!createBots && updateBots) {
-      findings.push(
-        Finding.fromObject({
-          name: "Nethermind Bot",
-          description: `Bot updated from (${NETHERMIND_ADDRESS}).`,
-          alertId: "NETHERMIND-2",
-          type: FindingType.Info,
-          severity: FindingSeverity.Info,
-          metadata: {
-            from: owner,
-          },
-        })
-      );
-    }
-  });
-
-  return findings;
-};
+    return findings;
+  };
+}
 
 export default {
-  handleTransaction,
+  handleTransaction: provideHandleTransaction(botsParams),
 };
