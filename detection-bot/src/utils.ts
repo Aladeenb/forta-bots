@@ -1,15 +1,17 @@
 import { Finding, FindingSeverity, FindingType } from "forta-agent";
 
-import { NETHERMIND_ADDRESS, DEPLOY_UPDATE_CONTRACT_ADDRESS } from "./cosntants";
+import { NETHERMIND_ADDRESS, DEPLOY_UPDATE_CONTRACT_ADDRESS, FORTA_BOT_REGISTRY } from "./cosntants";
 
 export type inputType = {
-  proxyAddress: string;
   deployerAddress: string;
+  botsRegistryAddress: string;
+  proxyAddress: string;
 };
 
 export const botParams: inputType = {
-  proxyAddress: DEPLOY_UPDATE_CONTRACT_ADDRESS,
   deployerAddress: NETHERMIND_ADDRESS,
+  botsRegistryAddress: FORTA_BOT_REGISTRY,
+  proxyAddress: DEPLOY_UPDATE_CONTRACT_ADDRESS,
 };
 
 export const updateFinding = (owner: string) => {
