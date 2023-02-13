@@ -1,7 +1,7 @@
 import { Finding, HandleTransaction, TransactionEvent, FindingSeverity, FindingType } from "forta-agent";
 import { provideHandleTransaction } from "./agent";
-import { NETHERMIND_ADDRESS, FORTA_BOT_REGISTRY, DEPLOY_UPDATE_CONTRACT_ADDRESS, BOT_UPDATED_EVENT } from "./cosntants";
-import { botParams, inputType, updateFinding } from "./utils";
+import { NETHERMIND_ADDRESS, FORTA_BOT_REGISTRY, DEPLOY_UPDATE_CONTRACT_ADDRESS, BOT_UPDATED_EVENT, POLYGON_ID } from "./cosntants";
+import { botParams, inputType } from "./utils";
 import { TestTransactionEvent } from "forta-agent-tools/lib/test";
 import { createAddress } from "forta-agent-tools";
 
@@ -14,17 +14,17 @@ export const mockBotsParams: inputType = {
 const mockDeployerAddress = createAddress(NETHERMIND_ADDRESS);
 const mockFortaBotRegistry = createAddress(FORTA_BOT_REGISTRY);
 const mockProxyAddress = createAddress(DEPLOY_UPDATE_CONTRACT_ADDRESS);
-const mockNotADeployerAddress = createAddress("0x01");
-const mockOtherFortaContract = createAddress("0x02");
 
-const createMockMetadata = (owner: string) => {
+const createMockMetadata = (agentId: number, owner: string, metaData: string, chainId: number[]) => {
   return {
+    agentId: agentId,
     owner: owner,
+    metaData: metaData,
+    chainIds: chainId,
   };
 };
 
-const mockMetadata1 = createMockMetadata(createAddress("0x030"));
-const mockMetadata2 = createMockMetadata(createAddress("0x031"));
+const mockarg = createMockMetadata(1, NETHERMIND_ADDRESS, "metadata", [POLYGON_ID]);
 
 describe("Nethermind forta deployment bot", () => {
   let handleTransaction: HandleTransaction;
@@ -34,19 +34,38 @@ describe("Nethermind forta deployment bot", () => {
   });
 
   describe("handleTransaction", () => {
-    it("returns empty findings if there are no bots created/updated", async () => {
+    it("should return empty findings if no bot is created/updated", async () => {
       const txEvent: TransactionEvent = new TestTransactionEvent();
       const findings: Finding[] = await handleTransaction(txEvent);
       expect(findings).toStrictEqual([]);
     });
 
-    it("returns a finding if there is a bot created", async () => {
-      const txEvent: TransactionEvent = new TestTransactionEvent()
-        .setFrom(mockDeployerAddress)
-        .setTo(mockProxyAddress)
-        .addEventLog(BOT_UPDATED_EVENT, mockFortaBotRegistry, [mockDeployerAddress]);
-      const findings: Finding[] = await handleTransaction(txEvent);
-      expect(findings).toStrictEqual(findings.push(updateFinding(mockDeployerAddress)));
+    it("should return a finding if a bot is created/updated from Nethermind deployer address", async () => {
+      const txEvent = new TestTransactionEvent()
+      .setFrom(mockDeployerAddress)
+      .setTo(mockFortaBotRegistry)
+      .addEventLog(BOT_UPDATED_EVENT, mockProxyAddress, [
+        mockarg.agentId,
+        mockarg.owner,
+        mockarg.metaData,
+        mockarg.chainIds,
+      ])
+      
+      const findings = await handleTransaction(txEvent);
+      expect(findings).toStrictEqual([
+        Finding.fromObject({
+          name: "Nethermind Bot",
+          description: `Bot updated from (${NETHERMIND_ADDRESS}).`,
+          alertId: "NETHERMIND-1",
+          type: FindingType.Info,
+          severity: FindingSeverity.Info,
+          metadata: {
+            agentId: mockarg.agentId.toString(),
+            by: mockarg.owner,
+            chainIds: mockarg.chainIds.toString(),
+          },
+        })
+      ])
     });
   });
 });

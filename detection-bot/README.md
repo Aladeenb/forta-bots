@@ -13,12 +13,7 @@ This bot detects bots that are deployed by the Nethermind deployer address, [0x8
 Describe each of the type of alerts fired by this agent
 
 - NETHERMIND-1
-  - Fired when `createAgent()` is invoked by Nethermind Forta deployer `0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8`
-  - Severity is always set to "info"
-  - Type is always set to "info"
-  - Metadata `from:` field specifies the owner
-- NETHERMIND-2
-  - Fired when `updateAgent()` is invoked by Nethermind Forta deployer `0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8`
+  - Fired when `updateAgent()` is emitted by Nethermind Forta deployer `0x88dC3a2284FA62e0027d6D6B1fCfDd2141a143b8`
   - Severity is always set to "info"
   - Type is always set to "info
   - Metadata `from:` field specifies the owner

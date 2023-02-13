@@ -14,7 +14,7 @@ export const botParams: inputType = {
   proxyAddress: DEPLOY_UPDATE_CONTRACT_ADDRESS,
 };
 
-export const updateFinding = (owner: string) => {
+export const updateFinding = (agentId: number, owner: string, chainIds: number[]) => {
   return Finding.fromObject({
     name: "Nethermind Bot",
     description: `Bot updated from (${owner}).`,
@@ -22,7 +22,9 @@ export const updateFinding = (owner: string) => {
     type: FindingType.Info,
     severity: FindingSeverity.Info,
     metadata: {
-      from: owner,
+      agentId: agentId.toString(),
+      by: owner,
+      chainIds: chainIds.toString(),
     },
   });
 };

@@ -6,12 +6,12 @@ export function provideHandleTransaction(botParams: inputType): HandleTransactio
   return async (txEvent: TransactionEvent): Promise<Finding[]> => {
     const findings: Finding[] = [];
     // filter the transaction logs for update bot events
-    const updateBot = txEvent.filterLog(BOT_UPDATED_EVENT, DEPLOY_UPDATE_CONTRACT_ADDRESS);
+    const updateBotEvent = txEvent.filterLog(BOT_UPDATED_EVENT, DEPLOY_UPDATE_CONTRACT_ADDRESS);
     if (txEvent.from !== botParams.deployerAddress.toLocaleLowerCase()) return findings;
     // returns a finding if event update is created
-    updateBot.forEach((updateBotFunction) => {
-      const { owner } = updateBotFunction.args;
-      findings.push(updateFinding(owner));
+    updateBotEvent.forEach((updateBot) => {
+      const { agentId, by, chainIds } = updateBot.args;
+      findings.push(updateFinding(agentId, by, chainIds));
     });
     return findings;
   };
